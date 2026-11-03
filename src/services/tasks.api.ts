@@ -11,15 +11,13 @@ export async function getTasks(options: FindTaskInput = {}): Promise<{ tasks: Ta
   let requestConfig: AxiosRequestConfig = {};
 
   if(options.status !== undefined) {
-    requestConfig = {
-      params: { status: options.status }
-    }
+    requestConfig.params = { status: options.status };
   }
 
   if(options.search !== undefined) {
-    requestConfig = {
-      ...requestConfig,
-      params: { search: options.search }
+    requestConfig.params = {
+      ...requestConfig.params,
+      search: encodeURIComponent(options.search)
     }
   }
 
@@ -35,4 +33,8 @@ export async function getTasks(options: FindTaskInput = {}): Promise<{ tasks: Ta
   }
 
   return parsed.data;
+}
+
+export async function deleteTask({ id }: { id: number }): Promise<void> {
+  await axiosInst.delete(`/tasks/${id}`);
 }

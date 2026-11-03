@@ -3,7 +3,8 @@ import type { Ref } from 'vue';
 export interface Toast {
   type: ToastType,
   message: string,
-  duration?: number /* мс, бесконечно если undefined */
+  duration?: number /* мс, бесконечно если undefined */,
+  close?: boolean
 }
 
 export interface ToastProvide {

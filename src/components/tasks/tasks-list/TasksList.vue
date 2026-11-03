@@ -6,6 +6,7 @@
   import { taskStatusSchema } from '@/schemas/tasks.schemas.ts';
   import { useToast } from '@/composables/useToast.ts';
   import TaskCard from '@/components/tasks/tasks-list/TaskCard.vue';
+  import { useRouter } from 'vue-router';
 
   const { taskId, status, search } = defineProps<{
     taskId?: number,
@@ -15,6 +16,18 @@
 
   const tasks = ref<Task[]>([]);
   const loading = ref<boolean>(false);
+  const findTaskInput = ref<FindTaskInput>({
+    search: ''
+  });
+
+  const taskStatusOptions = [
+    { status: undefined, text: 'Все'},
+    { status: 'open', text: 'Открытые' },
+    { status: 'in_progress', text: 'Обрабатываемые' },
+    { status: 'done', text: 'Завершенные' }
+  ];
+
+  const router = useRouter();
 
   const toastApi = useToast();
 
@@ -33,7 +46,8 @@
 
       toastApi.createToast({
         type: 'error',
-        message
+        message,
+        close: true
       });
     
     } finally {
@@ -42,8 +56,6 @@
   }
 
   watchEffect(() => {
-    toastApi.deleteToast();
-
     let params: FindTaskInput = { id: taskId, search };
 
     if(status) {
@@ -52,16 +64,36 @@
       if(parsed.error) {
         toastApi.createToast({
           type: 'error',
-          message: 'Недопустимый статус задачи'
+          message: 'Недопустимый статус задачи',
+          close: true
         });
 
+        findTaskInput.value.status = undefined;
+
         return;
-      
-      } else params.status = parsed.data;
-    }
+      }
+
+      findTaskInput.value.status = parsed.data;
+      params.status = parsed.data;
+    } 
+
+    findTaskInput.value.search = search;
 
     getTasks(params);
   });
+
+  function findClickHandler() {
+    let query: Record<string, string> = {};
+
+    if(typeof findTaskInput.value.search === 'string') query.search = findTaskInput.value.search;
+
+    if(findTaskInput.value.status) query.status = findTaskInput.value.status;
+
+    router.push({
+      name: 'view',
+      query
+    });
+  }
 </script>
 
 <template>
@@ -72,18 +104,28 @@
         <div class="grid grid-cols-12 gap-4 items-stretch">
           <div class="col-span-12 md:col-span-6 flex flex-1">
             <div class="flex flex-1">
-              <input type="text" class="input flex flex-1"/>
+              <input v-model="findTaskInput.search"
+                type="text"
+                placeholder="Поиск по названию"
+                class="input flex flex-1" />
             </div>
           </div>
 
           <div class="col-span-12 md:col-span-6 flex flex-1">
             <div class="flex flex-1">
-              <input type="text" class="input flex flex-1"/>
+              <select v-model="findTaskInput.status"
+                placeholder="Статус"
+                class="select flex flex-1">
+                <option v-for="o in taskStatusOptions" :value="o.status" :key="o.status">
+                  {{ o.text }}
+                </option>
+              </select>
             </div>
           </div>
 
           <div>
-            <button class="btn">
+            <button class="btn"
+              @click="findClickHandler">
               <span v-if="loading"
                 class="loading loading-spinner">
               </span>
@@ -98,7 +140,8 @@
       class="grid grid-cols-12 gap-4">
       <div v-for="t in tasks" :key="t.id"
         class="col-span-12 md:col-span-6 items-stretch">
-        <TaskCard :task="t"/>
+        <TaskCard :task="t"
+          @delete-success="getTasks({ ...findTaskInput })" />
       </div>
     </div>
 

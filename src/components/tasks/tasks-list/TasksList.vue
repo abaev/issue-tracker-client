@@ -24,7 +24,7 @@
   const taskStatusOptions = [
     { status: undefined, text: 'Все'},
     { status: 'open', text: 'Открытые' },
-    { status: 'in_progress', text: 'Обрабатываемые' },
+    { status: 'in_progress', text: 'В работе' },
     { status: 'done', text: 'Завершенные' }
   ];
 
@@ -125,7 +125,7 @@
             </div>
           </div>
 
-          <div>
+          <div class="col-span-12 flex justify-between items-center">
             <button class="btn"
               :disabled="loading"
               @click="findClickHandler">
@@ -134,6 +134,10 @@
               </span>
               Найти
             </button>
+
+            <RouterLink :to="{ name: 'create' }">
+              <a class="link link-hover">Создать задачу</a>
+            </RouterLink>
           </div>
         </div>
       </div>

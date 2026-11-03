@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import type { TaskStatus, CreateTaskInput, UpdateTaskInput, FindTaskInput, Task } from '@/types/tasks.ts';
 
-// TODO: Удалить лишние схемы
 export const taskIdSchema = z.int('Должно быть целым числом').positive('Должно быть положительным числом');
 const taskTitleSchema = z.string().min(1, 'Заголовок обязателен');
 const taskDescriptionSchema = z.string('Должно быть строкой');

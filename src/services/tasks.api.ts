@@ -1,6 +1,6 @@
 import { axiosInst } from '@/services/axios.ts';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { Task, FindTaskInput, UpdateTaskInput } from '@/types/tasks.ts';
+import type { Task, FindTaskInput, UpdateTaskInput, CreateTaskInput } from '@/types/tasks.ts';
 import { tasksObjectSchema, taskObjectSchema } from '@/schemas/tasks.schemas.ts';
 import { ApiError } from '@/errors/errors.ts';
 import { fieldErrors } from '@/utils/field.errors.ts';
@@ -42,6 +42,21 @@ export async function upadteTask({ id, updateTaskInput }: { id: number, updateTa
   const response: AxiosResponse<unknown> = await axiosInst.patch(
     `/tasks/${id}`,
     updateTaskInput
+  );
+
+  const parsed = taskObjectSchema.safeParse(response.data);
+
+  if(parsed.error) {
+    throw new ApiError('Ошибка ответа API', { details: fieldErrors(parsed.error) });
+  }
+
+  return parsed.data;
+}
+
+export async function createTask({ createTaskInput }: { createTaskInput: CreateTaskInput }): Promise<{ task: Task }> {
+  const response: AxiosResponse<unknown> = await axiosInst.post(
+    `/tasks/create`,
+    createTaskInput
   );
 
   const parsed = taskObjectSchema.safeParse(response.data);

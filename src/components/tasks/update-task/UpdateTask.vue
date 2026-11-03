@@ -5,8 +5,6 @@
   import { ApiError } from '@/errors/errors.ts';
   import { taskIdSchema, updateTaskInputSchema } from '@/schemas/tasks.schemas.ts';
   import { useToast } from '@/composables/useToast.ts';
-  import TaskCard from '@/components/tasks/tasks-list/TaskCard.vue';
-  import { useRouter } from 'vue-router';
   import { fieldErrors } from '@/utils/field.errors';
 
   const { taskId } = defineProps<{
@@ -23,7 +21,7 @@
 
   const taskStatusOptions = [
     { status: 'open', text: 'Открытые' },
-    { status: 'in_progress', text: 'Обрабатываемые' },
+    { status: 'in_progress', text: 'В работе' },
     { status: 'done', text: 'Завершенные' }
   ];
 

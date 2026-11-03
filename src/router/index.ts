@@ -22,6 +22,11 @@ const router = createRouter({
       })
     },
     {
+      name: 'create',
+      path: '/create',
+      component: () => import('@/views/tasks/Create.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/view'
     }

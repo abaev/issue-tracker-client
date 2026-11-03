@@ -42,7 +42,3 @@ Vue 3 · TypeScript · Vue Router · Axios · Zod · Tailwind CSS 4 · daisyUI
    ```bash
    npm run build
    ```
-
-## Примечание
-
-Это небольшой учебный проект для практики Vue 3, TypeScript и взаимодействия с REST API. Он не предназначен для использования в production.

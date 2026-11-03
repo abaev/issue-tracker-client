@@ -1,8 +1,7 @@
 import { axiosInst } from '@/services/axios.ts';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { FindTaskInput } from '@/types/tasks.ts';
-import type { Task } from '@/types/tasks.ts';
-import { tasksObjectSchema } from '@/schemas/tasks.schemas.ts';
+import type { Task, FindTaskInput, UpdateTaskInput } from '@/types/tasks.ts';
+import { tasksObjectSchema, taskObjectSchema } from '@/schemas/tasks.schemas.ts';
 import { ApiError } from '@/errors/errors.ts';
 import { fieldErrors } from '@/utils/field.errors.ts';
 
@@ -37,4 +36,19 @@ export async function getTasks(options: FindTaskInput = {}): Promise<{ tasks: Ta
 
 export async function deleteTask({ id }: { id: number }): Promise<void> {
   await axiosInst.delete(`/tasks/${id}`);
+}
+
+export async function upadteTask({ id, updateTaskInput }: { id: number, updateTaskInput: UpdateTaskInput }): Promise<{ task: Task }> {
+  const response: AxiosResponse<unknown> = await axiosInst.patch(
+    `/tasks/${id}`,
+    updateTaskInput
+  );
+
+  const parsed = taskObjectSchema.safeParse(response.data);
+
+  if(parsed.error) {
+    throw new ApiError('Ошибка ответа API', { details: fieldErrors(parsed.error) });
+  }
+
+  return parsed.data;
 }

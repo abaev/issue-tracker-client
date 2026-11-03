@@ -41,9 +41,14 @@
         <div v-if="task.description">{{ task.description }}</div>
 
         <div class="mt-4">
-          <button class="btn mr-4">
-            Редактировать 
-          </button>
+          <RouterLink :to="{
+              name: 'update',
+              params: { taskId: task.id }
+            }">
+            <button class="btn mr-4">
+              Редактировать 
+            </button>
+          </RouterLink>
 
           <button class="btn"
             :disabled="deleting"

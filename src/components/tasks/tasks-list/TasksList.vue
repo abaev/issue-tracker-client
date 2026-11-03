@@ -3,10 +3,11 @@
   import type { Task, FindTaskInput } from '@/types/tasks.ts';
   import { ref, watchEffect } from 'vue';
   import { ApiError } from '@/errors/errors.ts';
-  import { taskStatusSchema } from '@/schemas/tasks.schemas.ts';
+  import { findTaskInputSchema } from '@/schemas/tasks.schemas.ts';
   import { useToast } from '@/composables/useToast.ts';
   import TaskCard from '@/components/tasks/tasks-list/TaskCard.vue';
   import { useRouter } from 'vue-router';
+  import { fieldErrors } from '@/utils/field.errors';
 
   const { taskId, status, search } = defineProps<{
     taskId?: number,
@@ -56,30 +57,31 @@
   }
 
   watchEffect(() => {
-    let params: FindTaskInput = { id: taskId, search };
+    const getTaskParams: any = {};
 
-    if(status) {
-      const parsed = taskStatusSchema.safeParse(status);
+    if(taskId !== undefined) getTaskParams.id = taskId;
+    if(search !== undefined) getTaskParams.search = search;
+    if(status !== undefined) getTaskParams.status = status;
 
-      if(parsed.error) {
-        toastApi.createToast({
-          type: 'error',
-          message: 'Недопустимый статус задачи',
-          close: true
-        });
+    const parsed = findTaskInputSchema.safeParse(getTaskParams);
 
-        findTaskInput.value.status = undefined;
+    if(parsed.error) {
+      toastApi.createToast({
+        type: 'error',
+        message: 'Недопустимые параметры',
+        close: true
+      });
 
-        return;
-      }
+      if(fieldErrors(parsed.error).some(e => e.field === 'status')) findTaskInput.value.status = undefined;
 
-      findTaskInput.value.status = parsed.data;
-      params.status = parsed.data;
-    } 
+      return;
+    }
+
+    findTaskInput.value.status = parsed.data.status;
 
     findTaskInput.value.search = search;
 
-    getTasks(params);
+    getTasks(parsed.data);
   });
 
   function findClickHandler() {
@@ -97,7 +99,7 @@
 </script>
 
 <template>
-  <div class="p-2 w-full lg:w-3/4 xl:w-1/2 lg:mx-auto">
+  <div class="w-full">
     <!-- Фильтры -->
     <div class="card card-border bg-white mb-2">
       <div class="card-body">
@@ -125,6 +127,7 @@
 
           <div>
             <button class="btn"
+              :disabled="loading"
               @click="findClickHandler">
               <span v-if="loading"
                 class="loading loading-spinner">

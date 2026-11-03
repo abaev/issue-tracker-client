@@ -14,6 +14,14 @@ const router = createRouter({
       })
     },
     {
+      name: 'update',
+      path: '/update/:taskId?',
+      component: () => import('@/views/tasks/Update.vue'),
+      props: route => ({
+        taskId: typeof route.params.taskId === 'string' ? Number(route.params.taskId) || undefined : undefined
+      })
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/view'
     }

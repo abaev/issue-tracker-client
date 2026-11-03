@@ -9,7 +9,9 @@
 </script>
 
 <template>
-  <TasksList :task-id="taskId"
-    :status="status"
-    :search="search" />
+  <div class="p-2 w-full lg:w-3/4 xl:w-1/2 lg:mx-auto">
+    <TasksList :task-id="taskId"
+      :status="status"
+      :search="search" />
+  </div>
 </template>

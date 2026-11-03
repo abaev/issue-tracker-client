@@ -135,8 +135,9 @@
               Найти
             </button>
 
-            <RouterLink :to="{ name: 'create' }">
-              <a class="link link-hover">Создать задачу</a>
+            <RouterLink :to="{ name: 'create' }"
+              class="link link-hover">
+              Создать задачу
             </RouterLink>
           </div>
         </div>
@@ -152,7 +153,7 @@
       </div>
     </div>
 
-    <div v-else="!loading"
+    <div v-else-if="!loading"
       class="card card-border bg-white">
       <div class="card-body">Задачи не найдены</div>
     </div>

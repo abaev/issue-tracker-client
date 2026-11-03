@@ -4,6 +4,9 @@
   import { XMarkIcon } from '@heroicons/vue/24/solid';
 
   const { toast } = defineProps<{ toast: Toast }>();
+  const emit = defineEmits<{
+    close: [Toast]
+  }>();
 
   // Такое решение нужно чтобы Tailwind добавил CSS - имя класса не может быть динамическим,
   // все имена должны быть перечислены в коде (хоть в комментарии)
@@ -27,7 +30,8 @@
   <div :class="containerClass">
     <span>{{ toast.message }}</span>
 
-    <button class="btn btn-ghost btn-sm">
+    <button class="btn btn-ghost btn-sm"
+      @click="emit('close', toast)">
       <XMarkIcon :class="iconClass" />
     </button>
   </div>

@@ -1,7 +1,7 @@
 <!-- https://github.com/ChronicStone/VTEST-VUE-COMPOSITION-API -->
  
 <script setup lang="ts">
-  import { ref, provide, shallowRef, onMounted, onUnmounted, toValue } from 'vue';
+  import { ref, provide, shallowRef, onMounted, onUnmounted, toValue, toRaw } from 'vue';
   import type { Ref } from 'vue';
   import type { Toast } from '@/types/toast.ts';
   import { toastInjectionKey } from '@/composables/toast.injection.keys.ts';
@@ -29,8 +29,11 @@
     return newToast;
   }
 
-  function deleteToast() {
-    toasts.value = [];
+  function deleteToast(options?: { id?: number }) {
+    if(typeof options?.id === 'number') {
+      toasts.value = toasts.value.filter(t => t.id !== options.id);
+
+    } else toasts.value = [];
   }
 
   let processToastsIntID: number;
@@ -60,8 +63,9 @@
     <slot></slot>
 
     <div class="toast toast-top toast-end max-h-64 overflow-y-auto scrollbar-none">
-      <ToastComponent v-for="(t, i) in toasts" :key="t.id"
-        :toast="toValue(t.toast)" />
+      <ToastComponent v-for="t in toasts" :key="t.id"
+        :toast="toValue(t.toast)"
+        @close="deleteToast({ id: t.id })" />
     </div>
   </div>
 </template>

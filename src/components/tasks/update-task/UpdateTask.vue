@@ -170,8 +170,9 @@
             </template> 
 
             <div class="mt-6">
-              <RouterLink :to="{ name: 'view' }">
-                <a class="link link-hover">Список задач</a>
+              <RouterLink :to="{ name: 'view' }"
+                class="link link-hover">
+                Список задач
               </RouterLink>
             </div>
           </div>

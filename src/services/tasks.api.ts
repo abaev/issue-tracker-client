@@ -16,7 +16,7 @@ export async function getTasks(options: FindTaskInput = {}): Promise<{ tasks: Ta
   if(options.search !== undefined) {
     requestConfig.params = {
       ...requestConfig.params,
-      search: encodeURIComponent(options.search)
+      search: options.search
     }
   }
 
